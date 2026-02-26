@@ -13,7 +13,7 @@ namespace PeliculasAPI.Controllers
 {
     [ApiController]
     [Route("api/actores")]
-    public class ActoresController : ControllerBase
+    public class ActoresController : CustomBaseController
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
@@ -21,6 +21,7 @@ namespace PeliculasAPI.Controllers
         private readonly string contenedor = "actores";
 
         public ActoresController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
+              : base(context, mapper) // se los paso para que los pueda usar el controller custom
         {
             this.context = context;
             this.mapper = mapper;
@@ -30,29 +31,22 @@ namespace PeliculasAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ActorDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
-            var queryable = context.Actores.AsQueryable();
-            await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
+            //var queryable = context.Actores.AsQueryable();
+            //await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
 
-            var entidades = await queryable.Paginar(paginacionDTO).ToListAsync();
-            var dtos = mapper.Map<List<ActorDTO>>(entidades);
+            //var entidades = await queryable.Paginar(paginacionDTO).ToListAsync();
+            //var dtos = mapper.Map<List<ActorDTO>>(entidades);
 
-            return dtos;
+            //return dtos;
+
+           return await Get<Actor, ActorDTO>(paginacionDTO);
 
         }
 
         [HttpGet("{id:int}", Name = "obtenerActor")]
         public async Task<ActionResult<ActorDTO>> Get(int id)
         {
-            var entidad = await context.Actores.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (entidad == null)
-            {
-                return NotFound();
-            }
-
-            var dto = mapper.Map<ActorDTO>(entidad);
-
-            return dto;
+            return await Get<Actor, ActorDTO>(id);
         }
 
 
@@ -121,32 +115,7 @@ namespace PeliculasAPI.Controllers
         [HttpPatch("{id}")] //sirve para actualizar solo un campo, enviando el campo a corregir nada mas
         public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<ActorPatchDTO> patchDocument)
         {
-           if (patchDocument == null)
-           {
-                return BadRequest();
-           }
-
-            var entidadDB = await context.Actores.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (entidadDB == null)
-            {
-                return NotFound();
-            }
-
-            var entidadDTO = mapper.Map<ActorPatchDTO>(entidadDB);
-
-
-            patchDocument.ApplyTo(entidadDTO, ModelState);
-
-            var esValido = TryValidateModel(entidadDTO);
-
-            if (!esValido) 
-            {
-                return BadRequest(ModelState);
-            }
-            mapper.Map(entidadDTO, entidadDB);
-            await context.SaveChangesAsync();
-            return NoContent();            
+          return await Patch<Actor,ActorPatchDTO>(id, patchDocument);        
         }
 
 
@@ -170,6 +139,9 @@ namespace PeliculasAPI.Controllers
             
             await almacenadorArchivos.BorrarArchivo(actor.Foto, contenedor);
             return NoContent();    //devuelve un 204, esta todo OK pero sin devolver contenido
+
+            //ASI SERIA SI USARA EL GENERICO, PERO NO LO USO PORQUE YO CAMBIE PARA QUE BORRE EL ARCHIVO DE FOTO EN LOCAL QUE NO LO HACIA
+            //return await Delete<Actor>(id); 
 
         }
     }
