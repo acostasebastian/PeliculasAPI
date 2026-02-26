@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PeliculasAPI.DTO.Actor;
 using PeliculasAPI.DTO.Genero;
+using PeliculasAPI.DTO.Paginacion;
 using PeliculasAPI.Entidades;
+using PeliculasAPI.Helpers;
 using PeliculasAPI.Servicios;
 
 namespace PeliculasAPI.Controllers
@@ -26,9 +28,12 @@ namespace PeliculasAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ActorDTO>>> Get()
+        public async Task<ActionResult<List<ActorDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
-            var entidades = await context.Actores.ToListAsync();
+            var queryable = context.Actores.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
+
+            var entidades = await queryable.Paginar(paginacionDTO).ToListAsync();
             var dtos = mapper.Map<List<ActorDTO>>(entidades);
 
             return dtos;
@@ -148,14 +153,22 @@ namespace PeliculasAPI.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existe = await context.Actores.AnyAsync(x => x.Id == id);
-            if (!existe)
+            //var existe = await context.Actores.AnyAsync(x => x.Id == id);
+            var actor = await context.Actores.FirstOrDefaultAsync(x => x.Id == id);
+
+            //if (!existe)
+            if (actor is null)
             {
                 return NotFound();
             }
 
-            context.Remove(new Actor() { Id = id });
+            context.Remove(actor);
+            //context.Remove(new Actor() { Id = id });
+
+
             await context.SaveChangesAsync();
+            
+            await almacenadorArchivos.BorrarArchivo(actor.Foto, contenedor);
             return NoContent();    //devuelve un 204, esta todo OK pero sin devolver contenido
 
         }
