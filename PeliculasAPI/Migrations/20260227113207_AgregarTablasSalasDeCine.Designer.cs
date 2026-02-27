@@ -3,8 +3,8 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NetTopologySuite.Geometries;
 using PeliculasAPI;
 
 #nullable disable
@@ -12,9 +12,11 @@ using PeliculasAPI;
 namespace PeliculasAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260227113207_AgregarTablasSalasDeCine")]
+    partial class AgregarTablasSalasDeCine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -319,44 +321,9 @@ namespace PeliculasAPI.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
 
-                    b.Property<Point>("Ubicacion")
-                        .HasColumnType("geography");
-
                     b.HasKey("Id");
 
                     b.ToTable("SalaDeCines");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Sambil",
-                            Ubicacion = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (-69.9118804 18.4826214)")
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Megacentro",
-                            Ubicacion = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (-69.856427 18.506934)")
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Nombre = "Village East Cinema",
-                            Ubicacion = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (-73.986227 40.730898)")
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Nombre = "Pontevella",
-                            Ubicacion = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (42.344758634232576 -7.864261574948397)")
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Nombre = "Marineda City",
-                            Ubicacion = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (43.34578580686347 -8.429250407501087)")
-                        });
                 });
 
             modelBuilder.Entity("PeliculasAPI.Entidades.PeliculasActores", b =>
