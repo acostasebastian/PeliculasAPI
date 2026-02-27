@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using PeliculasAPI.DTO.Actor;
 using PeliculasAPI.DTO.ActorPelicula;
 using PeliculasAPI.DTO.Genero;
 using PeliculasAPI.DTO.Pelicula;
+using PeliculasAPI.DTO.Review;
 using PeliculasAPI.DTO.SalasDeCine;
+using PeliculasAPI.DTO.Usuarios;
 using PeliculasAPI.Entidades;
 
 namespace PeliculasAPI.Helpers
@@ -52,8 +55,19 @@ namespace PeliculasAPI.Helpers
                  .ForMember(x => x.Ubicacion, x => x.MapFrom(y =>
                 geometryFactory.CreatePoint(new Coordinate(y.Longitud, y.Latitud))));
 
-            
-            
+            //Usuarios
+            CreateMap<IdentityUser, UsuarioDTO>();
+
+            //Reviews
+            CreateMap<Review, ReviewDTO>()
+               .ForMember(x => x.NombreUsuario, x => x.MapFrom(y => y.Usuario.UserName));
+
+            CreateMap<ReviewDTO, Review>();
+            CreateMap<ReviewCreacionDTO, Review>();
+
+
+
+
 
         }
 

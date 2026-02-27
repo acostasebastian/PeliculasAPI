@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using PeliculasAPI.Entidades;
+using System.Security.Claims;
 
 namespace PeliculasAPI
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -41,6 +43,7 @@ namespace PeliculasAPI
 
         public DbSet<SalaDeCine> SalaDeCines { get; set; }
         public DbSet<PeliculasSalasDeCine> PeliculasSalasDeCines { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         //////////////////////+++++++++++++++++++++++++
 
@@ -59,8 +62,9 @@ namespace PeliculasAPI
 
             //var passwordHasher = new PasswordHasher<IdentityUser>();
 
-            //var username = "felipe@hotmail.com";
+            //var username = "sebastian@hotmail.com";
 
+            ////para tener siempre un usuario administrador en la base de datos
             //var usuarioAdmin = new IdentityUser()
             //{
             //    Id = usuarioAdminId,

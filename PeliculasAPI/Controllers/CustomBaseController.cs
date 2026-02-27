@@ -31,19 +31,9 @@ namespace PeliculasAPI.Controllers
             return dtos;
         }
 
-        ////Metodo GET CON PAGINACION
-        //protected async Task<List<TDTO>> Get<TEntidad, TDTO>(PaginacionDTO paginacionDTO,
-        //     IQueryable<TEntidad> queryable)
-        //     where TEntidad : class
-        //{
-        //    var queryable = context.Set<TEntidad>().AsQueryable();
-        //    await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
-        //    var entidades = await queryable.Paginar(paginacionDTO).ToListAsync();
-        //    return mapper.Map<List<TDTO>>(entidades);
-        //}
-
+        //Metodo GET CON PAGINACION   
         protected async Task<List<TDTO>> Get<TEntidad, TDTO>(PaginacionDTO paginacionDTO)
-            where TEntidad : class
+           where TEntidad : class
         {
             var queryable = context.Set<TEntidad>().AsQueryable();
             return await Get<TEntidad, TDTO>(paginacionDTO, queryable);
