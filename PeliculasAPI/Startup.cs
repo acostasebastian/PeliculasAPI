@@ -57,7 +57,14 @@ namespace PeliculasAPI
               ));
 
             //Para usar el servicio de NewtonsoftJson
-            services.AddControllers().AddNewtonsoftJson();
+            //le agrego el servicio de Filtro de Errores del Helper a nivel global
+            //Si da un error en produccion (subido a azure) podriamos verlos en Insights (Se crea un aplication insights)
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(FiltroErrores));
+            })              
+                
+               .AddNewtonsoftJson();
 
             //Para poder usar el sistema de Usuarios de Identity
             services.AddIdentity<IdentityUser, IdentityRole>()

@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="PeliculasAPI.Tests/PeliculasAPI.Tests.csproj" Id="c9fc3c44-ee5a-4118-87df-73a49de8d22a" />
   <Project Path="PeliculasAPI/PeliculasAPI.csproj" />
 </Solution>
